@@ -1,0 +1,70 @@
+.onva-answer-wrapper {
+    display: inline-block;
+}
+#onva-nps-wrapper {
+    margin: 0;
+    padding: 0;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+}
+.onva-nps-wrapper {
+    position: relative;
+    padding: 1em;
+    margin: 0 auto;
+    display: inline-block;
+    background: lightblue;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    /*
+    background: white;
+    box-shadow: 0px 5px 26px 0px rgba(0, 0, 0, 0.22), 0px 20px 28px 0px rgba(0, 0, 0, 0.30);
+    */
+}
+.onva-nps {
+}
+.onva-nps h4 {
+    margin-top: 0;
+}
+.onva-nps-button {
+    margin: 0.25em;
+}
+.onva-answer-wrapper input {
+    position: absolute;
+    left: -9999px;
+}
+.onva-nps-entry label {
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 0.2em;
+    background: white;
+    color: #12192e;
+    border: 3px solid #12192e;
+    width: 2em;
+    height: 2em;
+    line-height: 2em;
+    vertical-align: middle;
+    text-align: center;
+    transition: all .3s;
+}
+.onva-nps-entry label:hover {
+    color: white;
+    background: #12192e;
+}
+.onva-nps-entry input:checked + label {
+    color: white;
+    background: #12192e;
+}
+
+#onva-frame-closer {
+    display: block;
+    position: absolute;
+    right: 1em; /* see padding on frame-wrapper */
+    text-decoration: none;
+}
+#onva-frame-closer svg {
+    width: 16px;
+    height: 16px;
+}
