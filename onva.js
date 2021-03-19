@@ -299,12 +299,12 @@ class Survey {
             var actions = rendered.getElementsByClassName(survey.actionSubmitClass);
 
             for (var i = 0; i < actions.length; i++) {
-                actions[i].onclick = function () {
-                    if (!survey.classList.contains(survey.disabledClass)) {
-                        survey.classList.add(survey.disabledClass);
+                actions[i].addEventListener('click', function () {
+                    if (!this.classList.contains(survey.disabledClass)) {
+                        this.classList.add(survey.disabledClass);
                         survey.submit();
                     }
-                };
+                });
             }
 
             var container = document.getElementById(survey.containerId);
