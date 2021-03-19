@@ -164,6 +164,8 @@ var _parentNodeWithClass = function(element, className) {
     return parNode;
 }
 
+const endpoint = document.currentScript.src.replace(/:\/\/[^\.]+/, '://api').replace(/\/[^\/]+$/, '');
+
 class Survey {
     constructor(containerId, surveyId, completeCallback, locale = 'en', identifier = null, metadata = {}, targetting = {}) {
         this.containerId = containerId;
@@ -177,7 +179,7 @@ class Survey {
         this.locale = locale;
 
         // guess the endpoint based on where we're being loaded from - e.g. https://widgets.onva.io/onva.js will be https://api.onva.io
-        this.endpoint = document.currentScript.src.replace(/:\/\/[^\.]+/, '://api').replace(/\/[^\/]+$/, '');
+        this.endpoint = endpoint;
         this.surveyClass = 'onva-survey';
         this.questionClass = 'onva-question';
         this.questionsContainerClass = 'onva-questions-container';
