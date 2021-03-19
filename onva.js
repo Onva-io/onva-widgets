@@ -296,12 +296,12 @@ class Survey {
             var rendered = survey.renderSurvey(data.survey, data.questions);
 
             // hook up actions
-            var actions = rendered.getElementsByClassName(this.actionSubmitClass);
+            var actions = rendered.getElementsByClassName(survey.actionSubmitClass);
 
             for (var i = 0; i < actions.length; i++) {
                 actions[i].onclick = function () {
-                    if (!this.classList.contains(this.disabledClass)) {
-                        this.classList.add(this.disabledClass);
+                    if (!survey.classList.contains(survey.disabledClass)) {
+                        survey.classList.add(survey.disabledClass);
                         survey.submit();
                     }
                 };
