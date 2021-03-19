@@ -520,7 +520,7 @@ class Survey {
         };
 
         var renderedSurvey = _renderTemplateDoc(this.surveyTemplate, vars);
-        var questionList = renderedthis.querySelector('.' + this.questionsContainerClass);
+        var questionList = renderedSurvey.querySelector('.' + this.questionsContainerClass);
         var me = this;
 
         questions.forEach(function (question) {
