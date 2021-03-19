@@ -175,11 +175,115 @@ class Survey {
         this.completeCallback = completeCallback;
         this.submissionUuid = null;
         this.locale = locale;
+
+        // guess the endpoint based on where we're being loaded from - e.g. https://widgets.onva.io/onva.js will be https://api.onva.io
+        this.endpoint = document.currentScript.src.replace(/:\/\/[^\.]+/, '://api').replace(/\/[^\/]+$/, '');
+        this.surveyClass = 'onva-survey';
+        this.questionClass = 'onva-question';
+        this.questionsContainerClass = 'onva-questions-container';
+        this.answerClass = 'onva-answer';
+        this.answerWrapperClass = 'onva-answer-wrapper';
+        this.answersContainerClass = 'onva-answers-container';
+        this.errorClass = 'onva-error';
+        this.actionsWrapperClass = 'onva-actions-wrapper';
+        this.actionSubmitClass = 'onva-action-submit';
+        this.disabledClass = 'onva-disabled';
+        this.moreDetailClass = 'onva-more-detail';
+
+        this.surveyTemplate = `
+            <div class="onva-survey" data-survey-id="{{ survey_uuid }}" lang="{{ locale }}" dir="{{ text_direction }}">
+                <h2>{{ title }}</h2>
+                <p>{{ pre_text }}</p>
+                
+                <div class="onva-questions-container">
+                    <!-- questions will be injected here -->
+                </div>
+
+                <p>{{ post_text }}</p>
+
+                <div class="onva-actions-wrapper">
+                    <button class="onva-action-submit">Next</button>
+                </div>
+            </div>
+        `;
+
+        this.questionTemplate = `
+            <div class="onva-question" data-question-id="{{ question_id }}">
+                <h3>{{ content }}</h3>
+                <p>{{ pre_text }}</p>
+                <div class="onva-error" style="display: none;"></div>
+
+                <div class="onva-answers-container">
+                    <!-- answers will be inserted here -->
+                </div>
+
+                <p>{{ post_text }}</p>
+            </div>
+        `;
+
+        this.answerTemplate = `
+            <div class="onva-answer-wrapper" data-answer-id="{{ answer_id }}">
+                <!-- answer will be injected here -->
+            </div>
+        `;
+
+        this.errorTemplate = `
+            <div class="onva-error"></div>
+        `;
+
+        this.moreDetailTemplate = `
+            <input type="text" name="{{ name }}" class="onva-more-detail" style="display: none;" data-answer-id="{{ answer_id }}">
+        `;
+
+        this.dropdownOptionTemplate = `
+            <option value="{{ value }}">{{ content }}</option>
+        `;
+
+        this.multiDropdownTemplate = `
+            <select name="{{ name }}" id="{{ id }}" multiple class="onva-answer">
+                <!-- options will be inserted here -->
+            </select>
+        `;
+
+        this.singleDropdownTemplate = `
+            <select name="{{ name }}" id="{{ id }}" class="onva-answer">
+                <option>-- Select</option>
+                <!-- options will be inserted here -->
+            </select>
+        `;
+
+        this.checkboxTemplate = `
+            <div class="pretty p-default {{ class }}">
+                <input type="checkbox" name="{{ name }}" id="{{ id }}" value="{{ value }}" class="onva-answer" />
+                <label for="{{ id }}">{{ content }}</label>
+            </div>
+        `;
+
+        this.radioTemplate = `
+            <div class="pretty p-default {{ class }}">
+                <input type="radio" name="{{ name }}" id="{{ id }}" value="{{ value }}" class="onva-answer" />
+                <label for="{{ id }}">{{ content }}</label>
+            </div>
+        `;
+
+        this.radioInlineTemplate = `
+            <div class="onva-inline-wrapper">
+                <input type="radio" name="{{ name }}" id="{{ id }}" value="{{ value }}" class="onva-answer" />
+                <label class="onva-inline" for="{{ id }}">{{ content }}</label>
+            </div>
+        `;
+
+        this.checkboxInlineTemplate = `
+            <div class="onva-inline-wrapper">
+                <input type="checkbox" name="{{ name }}" id="{{ id }}" value="{{ value }}" class="onva-answer" />
+                <label class="onva-inline" for="{{ id }}">{{ content }}</label>
+            </div>
+        `;
     }
 
     begin(preRenderCallback, postRenderCallback, errorCallback) {
         var survey = this;
-        var surveyUrl = Survey.endpoint + '/survey/' + this.surveyId + '/begin/';
+        var surveyUrl = this.endpoint + '/survey/' + this.surveyId + '/begin/';
 
         function success(data) {
             if (preRenderCallback) {
@@ -190,12 +294,12 @@ class Survey {
             var rendered = survey.renderSurvey(data.survey, data.questions);
 
             // hook up actions
-            var actions = rendered.getElementsByClassName(Survey.actionSubmitClass);
+            var actions = rendered.getElementsByClassName(this.actionSubmitClass);
 
             for (var i = 0; i < actions.length; i++) {
                 actions[i].onclick = function () {
-                    if (!this.classList.contains(Survey.disabledClass)) {
-                        this.classList.add(Survey.disabledClass);
+                    if (!this.classList.contains(this.disabledClass)) {
+                        this.classList.add(this.disabledClass);
                         survey.submit();
                     }
                 };
@@ -233,7 +337,7 @@ class Survey {
         // this needs to submit and then render follow-up questions
 
         var survey = this;
-        var submissionUrl = Survey.endpoint + '/survey/' + this.surveyId + '/submit/' + this.submissionUuid;
+        var submissionUrl = this.endpoint + '/survey/' + this.surveyId + '/submit/' + this.submissionUuid;
         var data = {
             questions: this._gatherAnswers()
         };
@@ -242,20 +346,20 @@ class Survey {
             // if questions are in the response, we need to render them
             // if not, we're done
             var container = document.getElementById(survey.containerId);
-            var questionList = container.querySelector('.' + Survey.questionsContainerClass);
+            var questionList = container.querySelector('.' + this.questionsContainerClass);
 
             // remove questions that are there
-            var questions = questionList.querySelectorAll('.' + Survey.questionClass);
+            var questions = questionList.querySelectorAll('.' + this.questionClass);
 
             for (var i = 0; i < questions.length; i++) {
                 questionList.removeChild(questions[i]);
             }
 
             // remove disabled class from actions
-            var actions = container.querySelectorAll('.' + Survey.actionSubmitClass);
+            var actions = container.querySelectorAll('.' + this.actionSubmitClass);
 
             Array.prototype.forEach.call(actions, function(action, i) {
-                action.classList.remove(Survey.disabledClass);
+                action.classList.remove(this.disabledClass);
             });
 
             if (data.questions && data.questions.length) {
@@ -269,13 +373,13 @@ class Survey {
         }
 
         function error(data, status) {
-            var submit = document.querySelector('button.' + Survey.actionSubmitClass);
-            submit.classList.remove(Survey.disabledClass);
+            var submit = document.querySelector('button.' + this.actionSubmitClass);
+            submit.classList.remove(this.disabledClass);
 
             if (status == 400) {
                 if (data.errors) {
                     var container = document.getElementById(survey.containerId);
-                    var questions = container.getElementsByClassName(Survey.questionClass);
+                    var questions = container.getElementsByClassName(this.questionClass);
 
                     function handleError(error) {
                         if (error.loc[0] == 'questions') {
@@ -286,20 +390,20 @@ class Survey {
                             if (keyError == 'answers') {
                                 if (error.loc.length == 3) {
                                     // overall error, probably missing something
-                                    var errorPara = question.querySelector('*[class="' + Survey.errorClass + '"]');
+                                    var errorPara = question.querySelector('*[class="' + this.errorClass + '"]');
                                     errorPara.style.display = '';
                                     errorPara.innerText = _translateError(error.msg, error.type, survey.locale);
                                 } else {
                                     // answer specific, likely missing extra details
                                     var answerNum = error.loc[3];
-                                    var answers = question.querySelectorAll('div[class="' + Survey.answerWrapperClass + '"] input');
+                                    var answers = question.querySelectorAll('div[class="' + this.answerWrapperClass + '"] input');
                                     var checkedAnswers = Array.from(answers).filter(function (inp) { return inp.checked });
                                     var answerError = error.loc[4];
                                     var checkedAnswer = checkedAnswers[answerNum];
-                                    var answer = _parentNodeWithClass(checkedAnswer, Survey.answerWrapperClass);
+                                    var answer = _parentNodeWithClass(checkedAnswer, this.answerWrapperClass);
 
                                     // find error element and show
-                                    var errorPara = answer.querySelector('*[class="' + Survey.errorClass + '"]');
+                                    var errorPara = answer.querySelector('*[class="' + this.errorClass + '"]');
                                     errorPara.style.display = '';
                                     errorPara.innerText = _translateError(error.msg, error.type, survey.locale);
                                 }
@@ -322,7 +426,7 @@ class Survey {
 
     _gatherAnswers() {
         var container = document.getElementById(this.containerId);
-        var questions = container.querySelectorAll('.' + Survey.questionClass);
+        var questions = container.querySelectorAll('.' + this.questionClass);
         var responses = [];
 
         for (var q = 0; q < questions.length; q++) {
@@ -333,11 +437,11 @@ class Survey {
                 "answers": []
             };
 
-            var answers = question.querySelectorAll('.' + Survey.answerClass);
+            var answers = question.querySelectorAll('.' + this.answerClass);
 
             Array.prototype.forEach.call(answers, function(answer, i){
                 var tagName = answer.tagName;
-                var container = _parentNodeWithClass(answer, Survey.answerWrapperClass);
+                var container = _parentNodeWithClass(answer, this.answerWrapperClass);
                 var answerIds = [];
 
                 if (tagName == 'INPUT') {
@@ -375,7 +479,7 @@ class Survey {
                     var moreDetail = null;
 
                     answerIds.forEach(function(answerId) {
-                        var moreDetailElement = container.querySelector('input[data-answer-id="' + answerId + '"].' + Survey.moreDetailClass);
+                        var moreDetailElement = container.querySelector('input[data-answer-id="' + answerId + '"].' + this.moreDetailClass);
 
                         if (moreDetailElement) {
                             moreDetail = moreDetailElement.value;
@@ -413,8 +517,8 @@ class Survey {
             post_text: locale.post_text
         };
 
-        var renderedSurvey = _renderTemplateDoc(Survey.surveyTemplate, vars);
-        var questionList = renderedSurvey.querySelector('.' + Survey.questionsContainerClass);
+        var renderedSurvey = _renderTemplateDoc(this.surveyTemplate, vars);
+        var questionList = renderedthis.querySelector('.' + this.questionsContainerClass);
         var me = this;
 
         questions.forEach(function (question) {
@@ -427,7 +531,7 @@ class Survey {
 
     renderAnswerInline(rendered, question, answers) {
         var me = this;
-        var answerContainer = rendered.querySelector('.' + Survey.answersContainerClass);
+        var answerContainer = rendered.querySelector('.' + this.answersContainerClass);
 
         answers.forEach(function (answer) {
             var renderedAnswer = me.renderAnswerInlineItem(question, answer);
@@ -437,7 +541,7 @@ class Survey {
 
     renderAnswerList(rendered, question, answers) {
         var me = this;
-        var answerContainer = rendered.querySelector('.' + Survey.answersContainerClass);
+        var answerContainer = rendered.querySelector('.' + this.answersContainerClass);
 
         answers.forEach(function (answer) {
             var renderedAnswer = me.renderAnswerListItem(question, answer);
@@ -454,7 +558,7 @@ class Survey {
             post_text: locale.post_text
         };
 
-        var renderedQuestion = _renderTemplateDoc(Survey.questionTemplate, vars);
+        var renderedQuestion = _renderTemplateDoc(this.questionTemplate, vars);
 
         // TODO:
         //  inline style with buttons
@@ -478,15 +582,15 @@ class Survey {
 
     renderAnswerDropdown(rendered, question, answers) {
         var me = this;
-        var answerContainer = rendered.querySelector('.' + Survey.answersContainerClass);
+        var answerContainer = rendered.querySelector('.' + this.answersContainerClass);
         // create options
         // render into 
         var template;
 
         if (!question.maximum_answers || question.maximum_answers > 1) {
-            template = Survey.multiDropdownTemplate;
+            template = this.multiDropdownTemplate;
         } else {
-            template = Survey.singleDropdownTemplate;
+            template = this.singleDropdownTemplate;
         }
 
         var vars = {
@@ -504,13 +608,13 @@ class Survey {
                 content: locale.content
             };
 
-            var renderedAnswer = _renderTemplateDoc(Survey.dropdownOptionTemplate, vars);
+            var renderedAnswer = _renderTemplateDoc(this.dropdownOptionTemplate, vars);
             _extend(select, renderedAnswer);
         });
 
         _extend(answerContainer, dropdown);
 
-        var error = _renderTemplateDoc(Survey.errorTemplate, {});
+        var error = _renderTemplateDoc(this.errorTemplate, {});
         _extend(answerContainer, error);
     }
 
@@ -519,16 +623,16 @@ class Survey {
             answer_id: answer.answer_id
         };
 
-        var container = _renderTemplateDoc(Survey.answerTemplate, vars);
-        var wrapper = container.querySelector('.' + Survey.answerWrapperClass);
+        var container = _renderTemplateDoc(this.answerTemplate, vars);
+        var wrapper = container.querySelector('.' + this.answerWrapperClass);
         var template;
 
         if (!question.maximum_answers || question.maximum_answers > 1) {
-            template = Survey.checkboxTemplate;
+            template = this.checkboxTemplate;
 
         } else {
             // TODO auto "next" if radio
-            template = Survey.radioTemplate;
+            template = this.radioTemplate;
         }
 
         var answerId = 'answer_' + question.question_id + '_' + answer.answer_id;
@@ -551,28 +655,28 @@ class Survey {
             inputs[i].onchange = _updateQuestion;
         }
 
-        var error = _renderTemplateDoc(Survey.errorTemplate, {});
+        var error = _renderTemplateDoc(this.errorTemplate, {});
         _extend(wrapper, error);
 
         function _updateQuestion() {
-            var question = _parentNodeWithClass(this.parentNode, Survey.questionClass);
+            var question = _parentNodeWithClass(this.parentNode, this.questionClass);
 
-            var errors = question.getElementsByClassName(Survey.errorClass);
+            var errors = question.getElementsByClassName(this.errorClass);
 
             for (var e = 0; e < errors.length; e++) {
                 errors[e].style.display = 'none';
             }
 
-            var answers = question.getElementsByClassName(Survey.answerWrapperClass);
+            var answers = question.getElementsByClassName(this.answerWrapperClass);
 
             for (var a = 0; a < answers.length; a++) {
                 var answer = answers[a];
 
                 // find a more detail
-                var more_detail = answer.querySelector('input.' + Survey.moreDetailClass);
+                var more_detail = answer.querySelector('input.' + this.moreDetailClass);
 
                 if (more_detail && !more_detail.hasAttribute('data-no-hide')) {
-                    var checkbox = answer.querySelector('input:not(.' + Survey.moreDetailClass + ')');
+                    var checkbox = answer.querySelector('input:not(.' + this.moreDetailClass + ')');
 
                     if (checkbox.checked) {
                         more_detail.style.display = '';
@@ -590,10 +694,10 @@ class Survey {
                 answer_id: answer.answer_id
             };
 
-            var more_detail = _renderTemplateDoc(Survey.moreDetailTemplate, vars);
+            var more_detail = _renderTemplateDoc(this.moreDetailTemplate, vars);
             _extend(wrapper, more_detail);
 
-            var more_details = wrapper.getElementsByClassName(Survey.moreDetailClass);
+            var more_details = wrapper.getElementsByClassName(this.moreDetailClass);
 
             if (more_details.length) {
                 more_detail = more_details[0];
@@ -613,115 +717,7 @@ class Survey {
     }
 }
 
-// guess the endpoint based on where we're being loaded from - e.g. https://widgets.onva.io/onva.js will be https://api.onva.io
-Survey.endpoint = document.currentScript.src.replace(/:\/\/[^\.]+/, '://api').replace(/\/[^\/]+$/, '');
-Survey.surveyClass = 'onva-survey';
-Survey.questionClass = 'onva-question';
-Survey.questionsContainerClass = 'onva-questions-container';
-Survey.answerClass = 'onva-answer';
-Survey.answerWrapperClass = 'onva-answer-wrapper';
-Survey.answersContainerClass = 'onva-answers-container';
-Survey.errorClass = 'onva-error';
-Survey.actionsWrapperClass = 'onva-actions-wrapper';
-Survey.actionSubmitClass = 'onva-action-submit';
-Survey.disabledClass = 'onva-disabled';
-Survey.moreDetailClass = 'onva-more-detail';
-
-Survey.surveyTemplate = `
-    <div class="onva-survey" data-survey-id="{{ survey_uuid }}" lang="{{ locale }}" dir="{{ text_direction }}">
-        <h2>{{ title }}</h2>
-        <p>{{ pre_text }}</p>
-        
-        <div class="onva-questions-container">
-            <!-- questions will be injected here -->
-        </div>
-
-        <p>{{ post_text }}</p>
-
-        <div class="onva-actions-wrapper">
-            <button class="onva-action-submit">Next</button>
-        </div>
-    </div>
-`;
-
-Survey.questionTemplate = `
-    <div class="onva-question" data-question-id="{{ question_id }}">
-        <h3>{{ content }}</h3>
-        <p>{{ pre_text }}</p>
-        <div class="onva-error" style="display: none;"></div>
-
-        <div class="onva-answers-container">
-            <!-- answers will be inserted here -->
-        </div>
-
-        <p>{{ post_text }}</p>
-    </div>
-`;
-
-Survey.answerTemplate = `
-    <div class="onva-answer-wrapper" data-answer-id="{{ answer_id }}">
-        <!-- answer will be injected here -->
-    </div>
-`;
-
-Survey.errorTemplate = `
-    <div class="onva-error"></div>
-`;
-
-Survey.moreDetailTemplate = `
-    <input type="text" name="{{ name }}" class="onva-more-detail" style="display: none;" data-answer-id="{{ answer_id }}">
-`;
-
-Survey.dropdownOptionTemplate = `
-    <option value="{{ value }}">{{ content }}</option>
-`;
-
-Survey.multiDropdownTemplate = `
-    <select name="{{ name }}" id="{{ id }}" multiple class="onva-answer">
-        <!-- options will be inserted here -->
-    </select>
-`;
-
-Survey.singleDropdownTemplate = `
-    <select name="{{ name }}" id="{{ id }}" class="onva-answer">
-        <option>-- Select</option>
-        <!-- options will be inserted here -->
-    </select>
-`;
-
-Survey.checkboxTemplate = `
-    <div class="pretty p-default {{ class }}">
-        <input type="checkbox" name="{{ name }}" id="{{ id }}" value="{{ value }}" class="onva-answer" />
-        <div class="state p-primary">
-            <i class="icon mdi mdi-check"></i>
-            <label for="{{ id }}">{{ content }}</label>
-        </div>
-    </div>
-`;
-
-Survey.radioTemplate = `
-    <div class="pretty p-default {{ class }}">
-        <input type="radio" name="{{ name }}" id="{{ id }}" value="{{ value }}" class="onva-answer" />
-        <div class="state p-primary-o">
-            <label for="{{ id }}">{{ content }}</label>
-        </div>
-    </div>
-`;
-
-Survey.radioInlineTemplate = `
-    <div class="onva-inline-wrapper">
-        <input type="radio" name="{{ name }}" id="{{ id }}" value="{{ value }}" class="onva-answer" />
-        <label class="onva-inline" for="{{ id }}">{{ content }}</label>
-    </div>
-`;
-
-Survey.checkboxInlineTemplate = `
-    <div class="onva-inline-wrapper">
-        <input type="checkbox" name="{{ name }}" id="{{ id }}" value="{{ value }}" class="onva-answer" />
-        <label class="onva-inline" for="{{ id }}">{{ content }}</label>
-    </div>
-`;
-
+// auto-load styling if we have some
 var onva_css = document.currentScript.src.replace(/\.js$/, '.css');
 
 window.addEventListener('load', function() {

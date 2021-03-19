@@ -1,54 +1,4 @@
 function init() {
-    /*
-    Survey.answerTemplate = `
-        <li>
-            <input class="onva-nps-answer" value="{{ value }}"
-        </li>
-    `;
-
-    Survey.wrapperTemplate = `
-        <div class="onva-nps-wrapper" style="margin: 0 auto;">
-            <p class="onva-nps-question">{{ content }}</p>
-            <ul class="onva-nps-answers">
-                <!-- answers will be inserted here -->
-            </ul>
-        </div>
-    `;
-    */
-
-    Survey.answerTemplate = `
-        <div class="onva-answer-wrapper" data-answer-id="{{ answer_id }}">
-            <!-- answer will be injected here -->
-        </div>
-    `;
-
-    Survey.surveyTemplate = `
-        <div class="onva-survey" data-survey-id="{{ survey_uuid }}" lang="{{ locale }}" dir="{{ text_direction }}">
-            <h4>{{ title }}</h4>
-            
-            <div class="onva-questions-container">
-                <!-- questions will be injected here -->
-            </div>
-        </div>
-    `;
-
-    Survey.questionTemplate = `
-        <div class="onva-question" data-question-id="{{ question_id }}">
-            <div class="onva-error" style="display: none;"></div>
-
-            <div class="onva-answers-container">
-                <!-- answers will be inserted here -->
-            </div>
-        </div>
-    `;
-
-    Survey.radioTemplate = `
-        <div class="onva-nps-entry">
-            <input type="radio" name="{{ name }}" id="{{ id }}" value="{{ value }}" class="onva-answer" />
-            <label class="onva-nps-button" for="{{ id }}">{{ content }}</label>
-        </div>
-    `;
-
     var element = `
         <div id="onva-nps-wrapper">
             <div class="onva-nps-wrapper">
@@ -98,6 +48,56 @@ function init() {
     window._onva = new Survey(containerId, surveyId, complete, locale, identifier, metadata);
 
     if (!defer) {
+        /*
+        window._onva.answerTemplate = `
+            <li>
+                <input class="onva-nps-answer" value="{{ value }}"
+            </li>
+        `;
+
+        window._onva.wrapperTemplate = `
+            <div class="onva-nps-wrapper" style="margin: 0 auto;">
+                <p class="onva-nps-question">{{ content }}</p>
+                <ul class="onva-nps-answers">
+                    <!-- answers will be inserted here -->
+                </ul>
+            </div>
+        `;
+        */
+
+        window._onva.answerTemplate = `
+            <div class="onva-answer-wrapper" data-answer-id="{{ answer_id }}">
+                <!-- answer will be injected here -->
+            </div>
+        `;
+
+        window._onva.surveyTemplate = `
+            <div class="onva-survey" data-survey-id="{{ survey_uuid }}" lang="{{ locale }}" dir="{{ text_direction }}">
+                <h4>{{ title }}</h4>
+                
+                <div class="onva-questions-container">
+                    <!-- questions will be injected here -->
+                </div>
+            </div>
+        `;
+
+        window._onva.questionTemplate = `
+            <div class="onva-question" data-question-id="{{ question_id }}">
+                <div class="onva-error" style="display: none;"></div>
+
+                <div class="onva-answers-container">
+                    <!-- answers will be inserted here -->
+                </div>
+            </div>
+        `;
+
+        window._onva.radioTemplate = `
+            <div class="onva-nps-entry">
+                <input type="radio" name="{{ name }}" id="{{ id }}" value="{{ value }}" class="onva-answer" />
+                <label class="onva-nps-button" for="{{ id }}">{{ content }}</label>
+            </div>
+        `;
+
         window._onva.begin(preRender, postRender, error)
     }
 }
