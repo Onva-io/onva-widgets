@@ -16,10 +16,14 @@ function init() {
         console.error(data);
     };
 
-    window._onva = new Survey(containerId, surveyId, success, locale, identifier, metadata);
+    window._onva_simple = new Survey(containerId, surveyId, success, locale, identifier, metadata);
+
+    window._onva_simple.go = function() {
+        window._onva_simple.begin(undefined, render, error);
+    };
 
     if (!defer) {
-        window._onva.begin(undefined, render, error);
+        window._onva_simple.go();
     }
 }
 
@@ -56,10 +60,24 @@ if (!containerId) {
         style.href = onva_css;
         (document.head || document.body).appendChild(style);
 
-        var script = document.createElement('script');
-        script.async = true;
-        script.addEventListener('load', init, false);
-        script.src = onva_js;
-        document.body.appendChild(script);
+        // check if we've already loaded the script
+        let loaded = false;
+
+        for (var i = 0; i < document.scripts.length; ++i) {
+            if (document.scripts[i].src == onva_js) {
+                loaded = true;
+                break;
+            }
+        }
+
+        if (loaded) {
+            init();
+        } else {
+            var script = document.createElement('script');
+            script.async = true;
+            script.addEventListener('load', init, false);
+            script.src = onva_js;
+            document.body.appendChild(script);
+        }
     });
 }

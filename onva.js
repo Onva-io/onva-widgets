@@ -337,8 +337,7 @@ class Survey {
 
     submit() {
         // this needs to submit and then render follow-up questions
-
-        var survey = this;
+        const survey = this;
         var submissionUrl = this.endpoint + '/survey/' + this.surveyId + '/submit/' + this.submissionUuid;
         var data = {
             questions: this._gatherAnswers()
@@ -348,20 +347,20 @@ class Survey {
             // if questions are in the response, we need to render them
             // if not, we're done
             var container = document.getElementById(survey.containerId);
-            var questionList = container.querySelector('.' + this.questionsContainerClass);
+            var questionList = container.querySelector('.' + survey.questionsContainerClass);
 
             // remove questions that are there
-            var questions = questionList.querySelectorAll('.' + this.questionClass);
+            var questions = questionList.querySelectorAll('.' + survey.questionClass);
 
             for (var i = 0; i < questions.length; i++) {
                 questionList.removeChild(questions[i]);
             }
 
             // remove disabled class from actions
-            var actions = container.querySelectorAll('.' + this.actionSubmitClass);
+            var actions = container.querySelectorAll('.' + survey.actionSubmitClass);
 
             Array.prototype.forEach.call(actions, function(action, i) {
-                action.classList.remove(this.disabledClass);
+                action.classList.remove(survey.disabledClass);
             });
 
             if (data.questions && data.questions.length) {
@@ -375,13 +374,14 @@ class Survey {
         }
 
         function error(data, status) {
-            var submit = document.querySelector('button.' + this.actionSubmitClass);
-            submit.classList.remove(this.disabledClass);
+            var submit = document.querySelector('button.' + survey.actionSubmitClass);
+            submit.classList.remove(survey.disabledClass);
+            const me = survey;
 
             if (status == 400) {
                 if (data.errors) {
                     var container = document.getElementById(survey.containerId);
-                    var questions = container.getElementsByClassName(this.questionClass);
+                    var questions = container.getElementsByClassName(survey.questionClass);
 
                     function handleError(error) {
                         if (error.loc[0] == 'questions') {
@@ -392,20 +392,20 @@ class Survey {
                             if (keyError == 'answers') {
                                 if (error.loc.length == 3) {
                                     // overall error, probably missing something
-                                    var errorPara = question.querySelector('*[class="' + this.errorClass + '"]');
+                                    var errorPara = question.querySelector('*[class="' + me.errorClass + '"]');
                                     errorPara.style.display = '';
                                     errorPara.innerText = _translateError(error.msg, error.type, survey.locale);
                                 } else {
                                     // answer specific, likely missing extra details
                                     var answerNum = error.loc[3];
-                                    var answers = question.querySelectorAll('div[class="' + this.answerWrapperClass + '"] input');
+                                    var answers = question.querySelectorAll('div[class="' + me.answerWrapperClass + '"] input');
                                     var checkedAnswers = Array.from(answers).filter(function (inp) { return inp.checked });
                                     var answerError = error.loc[4];
                                     var checkedAnswer = checkedAnswers[answerNum];
-                                    var answer = _parentNodeWithClass(checkedAnswer, this.answerWrapperClass);
+                                    var answer = _parentNodeWithClass(checkedAnswer, me.answerWrapperClass);
 
                                     // find error element and show
-                                    var errorPara = answer.querySelector('*[class="' + this.errorClass + '"]');
+                                    var errorPara = answer.querySelector('*[class="' + me.errorClass + '"]');
                                     errorPara.style.display = '';
                                     errorPara.innerText = _translateError(error.msg, error.type, survey.locale);
                                 }
@@ -430,6 +430,7 @@ class Survey {
         var container = document.getElementById(this.containerId);
         var questions = container.querySelectorAll('.' + this.questionClass);
         var responses = [];
+        const me = this;
 
         for (var q = 0; q < questions.length; q++) {
             var question = questions[q];
@@ -443,7 +444,7 @@ class Survey {
 
             Array.prototype.forEach.call(answers, function(answer, i){
                 var tagName = answer.tagName;
-                var container = _parentNodeWithClass(answer, this.answerWrapperClass);
+                var container = _parentNodeWithClass(answer, me.answerWrapperClass);
                 var answerIds = [];
 
                 if (tagName == 'INPUT') {
@@ -481,7 +482,7 @@ class Survey {
                     var moreDetail = null;
 
                     answerIds.forEach(function(answerId) {
-                        var moreDetailElement = container.querySelector('input[data-answer-id="' + answerId + '"].' + this.moreDetailClass);
+                        var moreDetailElement = container.querySelector('input[data-answer-id="' + answerId + '"].' + me.moreDetailClass);
 
                         if (moreDetailElement) {
                             moreDetail = moreDetailElement.value;

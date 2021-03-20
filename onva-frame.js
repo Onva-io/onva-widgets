@@ -44,18 +44,22 @@ function init() {
         document.getElementById('onva-frame-closer').addEventListener('click', removeFrame);
     };
 
-    window._onva = new Survey(containerId, surveyId, complete, locale, identifier, metadata);
+    window._onva_framed = new Survey(containerId, surveyId, complete, locale, identifier, metadata);
 
-    window._onva.showFrame = function() {
-        window._onva.begin(preRender, postRender, error);
+    window._onva_framed.showFrame = function() {
+        window._onva_framed.begin(preRender, postRender, error);
     };
 
     if (triggerId) {
-        document.getElementById(triggerId).addEventListener('click', window._onva.showFrame);
+        document.getElementById(triggerId).addEventListener('click', window._onva_framed.showFrame);
     }
 
+    window._onva_framed.go = function() {
+        window._onva_framed.showFrame();
+    };
+
     if (!defer) {
-        window._onva.showFrame();
+        window._onva_framed.go();
     }
 }
 
@@ -93,11 +97,25 @@ if (!containerId) {
         style.href = onva_css;
         (document.head || document.body).appendChild(style);
 
-        var script = document.createElement('script');
-        script.async = true;
-        script.addEventListener('load', init, false);
-        script.src = onva_js;
-        document.body.appendChild(script);
+        // check if we've already loaded the script
+        let loaded = false;
+
+        for (var i = 0; i < document.scripts.length; ++i) {
+            if (document.scripts[i].src == onva_js) {
+                loaded = true;
+                break;
+            }
+        }
+
+        if (loaded) {
+            init();
+        } else {
+            var script = document.createElement('script');
+            script.async = true;
+            script.addEventListener('load', init, false);
+            script.src = onva_js;
+            document.body.appendChild(script);
+        }
     });
 }
 
