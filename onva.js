@@ -625,7 +625,8 @@ class Survey {
         var vars = {
             answer_id: answer.answer_id
         };
-
+        
+        const survey = this;
         var container = _renderTemplateDoc(this.answerTemplate, vars);
         var wrapper = container.querySelector('.' + this.answerWrapperClass);
         var template;
@@ -662,24 +663,24 @@ class Survey {
         _extend(wrapper, error);
 
         function _updateQuestion() {
-            var question = _parentNodeWithClass(this.parentNode, this.questionClass);
+            var question = _parentNodeWithClass(this.parentNode, survey.questionClass);
 
-            var errors = question.getElementsByClassName(this.errorClass);
+            var errors = question.getElementsByClassName(survey.errorClass);
 
             for (var e = 0; e < errors.length; e++) {
                 errors[e].style.display = 'none';
             }
 
-            var answers = question.getElementsByClassName(this.answerWrapperClass);
+            var answers = question.getElementsByClassName(survey.answerWrapperClass);
 
             for (var a = 0; a < answers.length; a++) {
                 var answer = answers[a];
 
                 // find a more detail
-                var more_detail = answer.querySelector('input.' + this.moreDetailClass);
+                var more_detail = answer.querySelector('input.' + survey.moreDetailClass);
 
                 if (more_detail && !more_detail.hasAttribute('data-no-hide')) {
-                    var checkbox = answer.querySelector('input:not(.' + this.moreDetailClass + ')');
+                    var checkbox = answer.querySelector('input:not(.' + survey.moreDetailClass + ')');
 
                     if (checkbox.checked) {
                         more_detail.style.display = '';
@@ -704,7 +705,7 @@ class Survey {
 
             if (more_details.length) {
                 more_detail = more_details[0];
-                more_detail.onchange = _updateQuestion;
+                more_detail.addEventListener('change', _updateQuestion);
 
                 if (more_detail.style.display != 'none') {
                     // null means the item is not initially visible, so don't
