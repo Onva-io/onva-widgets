@@ -1,4 +1,4 @@
-.onva-answer-wrapper {
+#onva-nps-wrapper .onva-answer-wrapper {
     display: inline-block;
 }
 #onva-nps-wrapper {
@@ -31,7 +31,7 @@
 .onva-nps-button {
     margin: 0.25em;
 }
-.onva-answer-wrapper input {
+#onva-nps-wrapper .onva-answer-wrapper input {
     position: absolute;
     left: -9999px;
 }
