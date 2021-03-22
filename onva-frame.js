@@ -1,6 +1,7 @@
 (function () {
     var script = document.currentScript;
     var containerId = script.getAttribute('data-container-id') || 'onva-frame';
+    var onComplete = script.getAttribute('data-complete-callback');
     var surveyId = script.getAttribute('data-survey-uuid');
     var defer = ((script.getAttribute('data-defer') || '') == 'true');
     var triggerId = script.getAttribute('data-trigger-id');
@@ -37,7 +38,9 @@
                 var complete = function() {
                     console.log('survey complete');
 
-                    if (redirect) {
+                    if (onComplete) {
+                        eval(onComplete);
+                    } else if (redirect) {
                         top.location.href = redirect;
                     } else {
                         removeFrame();
