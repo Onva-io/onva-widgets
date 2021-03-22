@@ -17,15 +17,9 @@
 .onva-frame-wrapper {
 }
 
-@media only screen and (max-device-width: 600px) {
-    .onva-frame-wrapper {
-        width: 80%;
-    }
-}
-@media only screen and (min-device-width: 601px) {
-    .onva-frame-wrapper {
-        width: 80%;
-    }
+.onva-frame-wrapper {
+    width: 500px;
+    max-width: 80%;
 }
 
 .onva-frame-wrapper {
