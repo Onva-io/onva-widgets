@@ -513,7 +513,7 @@ class Survey {
 
         var vars = {
             survey_uuid: survey.survey_uuid,
-            locale: locale,
+            locale: this.locale,
             text_direction: text_direction,
             title: locale.title,
             pre_text: locale.pre_text,
