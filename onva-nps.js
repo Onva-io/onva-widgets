@@ -21,17 +21,16 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             function init() {
-                var element = `
-                    <div id="onva-nps-wrapper">
-                        <div class="onva-nps-wrapper">
-                            <a href="javascript:void(0);" id="onva-frame-closer">
-                                <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="503.021px" height="503.021px" viewBox="0 0 503.021 503.021" style="enable-background:new 0 0 503.021 503.021;" xml:space="preserve"> <g> <path d="M491.613,75.643l-64.235-64.235c-15.202-15.202-39.854-15.202-55.056,0L251.507,132.222L130.686,11.407 c-15.202-15.202-39.853-15.202-55.055,0L11.401,75.643c-15.202,15.202-15.202,39.854,0,55.056l120.821,120.815L11.401,372.328 c-15.202,15.202-15.202,39.854,0,55.056l64.235,64.229c15.202,15.202,39.854,15.202,55.056,0l120.815-120.814l120.822,120.814 c15.202,15.202,39.854,15.202,55.056,0l64.235-64.229c15.202-15.202,15.202-39.854,0-55.056L370.793,251.514l120.82-120.815 C506.815,115.49,506.815,90.845,491.613,75.643z"/> </g> </svg>
-                            </a>
-                            <div class="onva-nps" id="` + containerId + `">
-                            </div>
-                        </div>
-                    </div>
-                `;
+                var element = '' +
+                    '<div id="onva-nps-wrapper">' +
+                        '<div class="onva-nps-wrapper">' +
+                            '<a href="javascript:void(0);" id="onva-frame-closer">' +
+                                '<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="503.021px" height="503.021px" viewBox="0 0 503.021 503.021" style="enable-background:new 0 0 503.021 503.021;" xml:space="preserve"> <g> <path d="M491.613,75.643l-64.235-64.235c-15.202-15.202-39.854-15.202-55.056,0L251.507,132.222L130.686,11.407 c-15.202-15.202-39.853-15.202-55.055,0L11.401,75.643c-15.202,15.202-15.202,39.854,0,55.056l120.821,120.815L11.401,372.328 c-15.202,15.202-15.202,39.854,0,55.056l64.235,64.229c15.202,15.202,39.854,15.202,55.056,0l120.815-120.814l120.822,120.814 c15.202,15.202,39.854,15.202,55.056,0l64.235-64.229c15.202-15.202,15.202-39.854,0-55.056L370.793,251.514l120.82-120.815 C506.815,115.49,506.815,90.845,491.613,75.643z"/> </g> </svg>' +
+                            '</a>' +
+                            '<div class="onva-nps" id="' + containerId + '">' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>';
 
                 var preRender = function() {
                     var doc = document.createElement('div');
@@ -71,55 +70,34 @@
 
                 window._onva_nps = new Survey(containerId, surveyId, complete, locale, identifier, metadata);
 
-                /*
-                window._onva_nps.answerTemplate = `
-                    <li>
-                        <input class="onva-nps-answer" value="{{ value }}"
-                    </li>
-                `;
+                window._onva_nps.answerTemplate = '' +
+                    '<div class="onva-answer-wrapper" data-answer-id="{{ answer_id }}">' +
+                        '<!-- answer will be injected here -->' +
+                    '</div>';
 
-                window._onva_nps.wrapperTemplate = `
-                    <div class="onva-nps-wrapper" style="margin: 0 auto;">
-                        <p class="onva-nps-question">{{ content }}</p>
-                        <ul class="onva-nps-answers">
-                            <!-- answers will be inserted here -->
-                        </ul>
-                    </div>
-                `;
-                */
-
-                window._onva_nps.answerTemplate = `
-                    <div class="onva-answer-wrapper" data-answer-id="{{ answer_id }}">
-                        <!-- answer will be injected here -->
-                    </div>
-                `;
-
-                window._onva_nps.surveyTemplate = `
-                    <div class="onva-survey" data-survey-id="{{ survey_uuid }}" lang="{{ locale }}" dir="{{ text_direction }}">
-                        <h4>{{ title }}</h4>
+                window._onva_nps.surveyTemplate = '' +
+                    '<div class="onva-survey" data-survey-id="{{ survey_uuid }}" lang="{{ locale }}" dir="{{ text_direction }}">' +
+                        '<h4>{{ title }}</h4>' +
                         
-                        <div class="onva-questions-container">
-                            <!-- questions will be injected here -->
-                        </div>
-                    </div>
-                `;
+                        '<div class="onva-questions-container">' +
+                            '<!-- questions will be injected here -->' +
+                        '</div>' +
+                    '</div>';
 
-                window._onva_nps.questionTemplate = `
-                    <div class="onva-question" data-question-id="{{ question_id }}">
-                        <div class="onva-error" style="display: none;"></div>
+                window._onva_nps.questionTemplate = '' +
+                    '<div class="onva-question" data-question-id="{{ question_id }}">' +
+                        '<div class="onva-error" style="display: none;"></div>' +
 
-                        <div class="onva-answers-container">
-                            <!-- answers will be inserted here -->
-                        </div>
-                    </div>
-                `;
+                        '<div class="onva-answers-container">' +
+                            '<!-- answers will be inserted here -->' +
+                        '</div>' +
+                    '</div>';
 
-                window._onva_nps.radioTemplate = `
-                    <div class="onva-nps-entry">
-                        <input type="radio" name="{{ name }}" id="{{ id }}" value="{{ value }}" class="onva-answer" />
-                        <label class="onva-nps-button" for="{{ id }}">{{ content }}</label>
-                    </div>
-                `;
+                window._onva_nps.radioTemplate = '' +
+                    '<div class="onva-nps-entry">' +
+                        '<input type="radio" name="{{ name }}" id="{{ id }}" value="{{ value }}" class="onva-answer" />' +
+                        '<label class="onva-nps-button" for="{{ id }}">{{ content }}</label>' +
+                    '</div>';
 
                 window._onva_nps.go = function() {
                     window._onva_nps.begin(preRender, postRender, error);
