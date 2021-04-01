@@ -3,7 +3,7 @@
     var containerId = script.getAttribute('data-container-id') || 'onva-frame';
     var onComplete = script.getAttribute('data-complete-callback');
     var surveyId = script.getAttribute('data-survey-uuid');
-    var defer = ((script.getAttribute('data-defer') || '') == 'true');
+    var defer = ((script.getAttribute('data-defer') || '').toLowerCase() == 'true');
     var triggerId = script.getAttribute('data-trigger-id');
 
     if (!containerId) {
