@@ -167,13 +167,13 @@ var _parentNodeWithClass = function(element, className) {
 const endpoint = document.currentScript.src.replace(/:\/\/[^\.]+/, '://api').replace(/\/[^\/]+$/, '');
 
 class Survey {
-    constructor(containerId, surveyId, completeCallback, locale = 'en', identifier = null, metadata = {}, targetting = {}) {
+    constructor(containerId, surveyId, completeCallback, locale = 'en', identifier = null, metadata = {}, targeting = {}) {
         this.containerId = containerId;
         this.surveyId = surveyId;
         this.locale = locale;
         this.identifier = identifier;
         this.metadata = metadata;
-        this.targetting = targetting;
+        this.targeting = targeting;
         this.completeCallback = completeCallback;
         this.submissionUuid = null;
         this.locale = locale;
@@ -255,14 +255,14 @@ class Survey {
         `;
 
         this.checkboxTemplate = `
-            <div class="pretty p-default {{ class }}">
+            <div class="{{ class }}">
                 <input type="checkbox" name="{{ name }}" id="{{ id }}" value="{{ value }}" class="onva-answer" />
                 <label for="{{ id }}">{{ content }}</label>
             </div>
         `;
 
         this.radioTemplate = `
-            <div class="pretty p-default {{ class }}">
+            <div class="{{ class }}">
                 <input type="radio" name="{{ name }}" id="{{ id }}" value="{{ value }}" class="onva-answer" />
                 <label for="{{ id }}">{{ content }}</label>
             </div>
@@ -327,7 +327,7 @@ class Survey {
         var userData = {
             identifier: this.identifier,
             metadata: this.metadata,
-            targetting: this.targetting,
+            targeting: this.targeting,
             locale: this.locale,
             questions: []
         };
