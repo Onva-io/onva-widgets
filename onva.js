@@ -566,11 +566,11 @@ class Survey {
         // TODO:
         //  inline style with buttons
         //  other styles too
-        if (question.metadata.style == 'dropdown') {
+        if (question.metadata._style == 'dropdown') {
             // dropdown
             this.renderAnswerDropdown(renderedQuestion, question, question.answers);
 
-        } else if (question.metadata.style == 'inline') {
+        } else if (question.metadata._style == 'inline') {
             // inline buttons
             console.warn('inline is currently not supported, falling back');
             // this.renderAnswerInline(renderedQuestion, question, question.answers);
